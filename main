@@ -1,0 +1,51 @@
+String[] letters = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
+
+final int WIDTH = 1000;
+
+int BOARD_WIDTH = 5;
+int BOARD_HEIGHT = 5;
+float TILE_SIZE = 200;
+
+final int GAME_MODE = 0;
+
+final int SOLVES_IN_AVERAGE = 5;
+int[][] board;
+float[] shades;
+float[][] transitions;
+PFont font;
+int highlightX = 2;
+int highlightY = 2;
+boolean horizontalLast = false;
+int UI_SIZE = 300;
+int startMillis = -1;
+int endMillis = -1;
+int correctTiles = 0;
+int[] times = new int[SOLVES_IN_AVERAGE];
+int average = -1;
+int minIndex = -1;
+int maxIndex = -1;
+boolean isScrambled = false;
+int centerTileX = BOARD_WIDTH/2;
+int centerTileY = BOARD_HEIGHT/2;
+
+int timeSinceLastWASD = -9999;
+
+int moveCount = 0;
+int resizeDelay = 0;
+
+float TRANSITION_FACTOR = 0.666667;
+boolean lastMoused = true;
+boolean isSpaceDown = false;
+boolean isShiftDown = false;
+boolean isMouseDown = false;
+
+void setup(){
+  frameRate(60);
+  font = loadFont("ArialMT-48.vlw");
+  
+  resetBoard(5);
+  //size(BOARD_WIDTH*TILE_SIZE+UI_SIZE,BOARD_HEIGHT*TILE_SIZE);
+  size(1300,1000);
+  noSmooth();
+  noStroke();
+}
