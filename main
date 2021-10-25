@@ -49,3 +49,59 @@ void setup(){
   noSmooth();
   noStroke();
 }
+void resetBoard(int inputSize){
+  horizontalLast = false;
+  isScrambled = false;
+  
+  BOARD_HEIGHT = inputSize;
+  BOARD_WIDTH = inputSize;
+  
+  highlightX = centerTileX = (int)(BOARD_WIDTH/2);
+  highlightY = centerTileY = (int)(BOARD_HEIGHT/2);
+
+  TILE_SIZE = ((float)1000.0)/inputSize;
+  
+  board = new int[BOARD_HEIGHT][BOARD_WIDTH];
+  shades = new float[BOARD_HEIGHT*BOARD_WIDTH];
+  transitions = new float[2][max(BOARD_WIDTH,BOARD_HEIGHT)];
+  
+  for(int y = 0; y < BOARD_HEIGHT; y++){
+    for(int x = 0; x < BOARD_WIDTH; x++){
+      board[y][x] = y*BOARD_WIDTH+x;
+      shades[y*BOARD_WIDTH+x] = random(0.5,1.0);
+    }
+  }
+  for(int i = 0; i < 2; i++){
+    for(int j = 0; j < max(BOARD_HEIGHT,BOARD_WIDTH); j++){
+      transitions[i][j] = 0;
+    }
+  }
+  for(int i = 0; i < SOLVES_IN_AVERAGE; i++){
+    times[i] = -1;
+  }
+  
+  startMillis = -1;
+  endMillis = -1;
+  
+  correctTiles = BOARD_WIDTH*BOARD_HEIGHT;
+  
+  moveCount = 0;
+}
+void draw(){
+  if(isMouseDown && endMillis == -1){
+    lastMoused = true;
+    int newX = floor((float)mouseX/TILE_SIZE+BOARD_WIDTH)%BOARD_WIDTH;
+    int newY = floor((float)mouseY/TILE_SIZE+BOARD_HEIGHT)%BOARD_HEIGHT;
+    while(hasDiff(newX,highlightX,true) && endMillis == -1 && isMoveableTile(true)){
+      move(0,highlightX,highlightY, false);
+    }
+    while(hasDiff(newX,highlightX,false) && endMillis == -1 && isMoveableTile(true)){
+      move(1,highlightX,highlightY, false);
+    }
+    while(hasDiff(newY,highlightY,true) && endMillis == -1 && isMoveableTile(false)){
+      move(2,highlightX,highlightY, false);
+    }
+    while(hasDiff(newY,highlightY,false) && endMillis == -1 && isMoveableTile(false)){
+      move(3,highlightX,highlightY, false);
+    }
+  }
