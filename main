@@ -105,3 +105,65 @@ void draw(){
       move(3,highlightX,highlightY, false);
     }
   }
+for(int i = 0; i < 2; i++){
+    for(int j = 0; j < max(BOARD_HEIGHT,BOARD_WIDTH); j++){
+      if(i == 0){
+        if(transitions[i][j] > ((float)BOARD_WIDTH)/2){
+          transitions[i][j] -= BOARD_WIDTH;
+        }else if(transitions[i][j] < -((float)BOARD_WIDTH)/2){
+          transitions[i][j] += BOARD_WIDTH;
+        }
+      }else if(i == 1){
+        if(transitions[i][j] > ((float)BOARD_HEIGHT)/2){
+          transitions[i][j] -= BOARD_HEIGHT;
+        }else if(transitions[i][j] < -((float)BOARD_HEIGHT)/2){
+          transitions[i][j] += BOARD_HEIGHT;
+        }
+      }
+      transitions[i][j] *= TRANSITION_FACTOR;
+    }
+  }
+  background(160,200,250);
+  setFont(0);
+  for(int y = 0; y < BOARD_HEIGHT; y++){
+    for(int x = 0; x < BOARD_WIDTH; x++){
+      float ax = x;
+      if(horizontalLast){
+        ax += transitions[0][y];
+      }
+      ax = (ax+BOARD_WIDTH)%BOARD_WIDTH;
+      float ay = y;
+      if(!horizontalLast){
+        ay += transitions[1][x];
+      }
+      ay = (ay+BOARD_HEIGHT)%BOARD_HEIGHT;
+      int i = board[y][x];
+      while(ay > -1){
+        float aax = ax;
+        while(aax > -1){
+          //fill(255*shades[i],190*shades[i],150*shades[i]);
+          if(GAME_MODE == 1 && x == centerTileX && y == centerTileY){
+            fill(255,255,255);
+          }else{
+            float colorX = (float)(i%BOARD_WIDTH)/(BOARD_WIDTH-1);
+            float colorY = (float)(i/BOARD_WIDTH)/(BOARD_HEIGHT-1);
+            
+            /*float xDist = abs((i%BOARD_WIDTH)-x);
+            if(xDist >= 3) xDist = 5-xDist;
+            
+            float yDist = abs((i/BOARD_WIDTH)-y);
+            if(yDist >= 3) yDist = 5-yDist;
+            float relDist = ((float)(xDist+yDist))/5.0;
+            colorX = 1-relDist;
+            fill(colorX*155+100);*/
+            fill((1-colorX)*255,colorY*255,colorX*255);
+          }
+          rect(aax*TILE_SIZE,ay*TILE_SIZE,TILE_SIZE,TILE_SIZE);
+          fill(0,0,0);
+          if(BOARD_WIDTH*BOARD_HEIGHT > 26){
+            int py = floor(i/BOARD_WIDTH);
+            int px = i%BOARD_WIDTH;
+            text((i+1),(aax+0.5)*TILE_SIZE,(ay+0.7)*TILE_SIZE);
+          }else{
+            text(letters[i],(aax+0.5)*TILE_SIZE,(ay+0.82)*TILE_SIZE);
+          }
