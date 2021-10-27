@@ -167,3 +167,74 @@ for(int i = 0; i < 2; i++){
           }else{
             text(letters[i],(aax+0.5)*TILE_SIZE,(ay+0.82)*TILE_SIZE);
           }
+if(!lastMoused && x == highlightX && y == highlightY){
+noFill();
+float f = TILE_SIZE*0.038;
+strokeWeight(f*2);
+stroke(abs((frameCount*20)%510-255));
+if(isSpaceDown || millis()-timeSinceLastWASD < 500){
+rect(aax*TILE_SIZE+f*2,ay*TILE_SIZE+f*2,TILE_SIZE-f*4,TILE_SIZE-f*4);
+line(aax*TILE_SIZE+f*2,ay*TILE_SIZE+f*2,aax*TILE_SIZE+f*6,ay*TILE_SIZE+f*6);
+line((aax+1)*TILE_SIZE-f*2,ay*TILE_SIZE+f*2,(aax+1)*TILE_SIZE-f*6,ay*TILE_SIZE+f*6);
+line(aax*TILE_SIZE+f*2,(ay+1)*TILE_SIZE-f*2,aax*TILE_SIZE+f*6,(ay+1)*TILE_SIZE-f*6);
+line((aax+1)*TILE_SIZE-f*2,(ay+1)*TILE_SIZE-f*2,(aax+1)*TILE_SIZE-f*6,(ay+1)*TILE_SIZE-f*6);
+}else{
+rect(aax*TILE_SIZE+f,ay*TILE_SIZE+f,TILE_SIZE-f*2,TILE_SIZE-f*2);
+}
+noStroke();
+}
+aax -= BOARD_WIDTH;
+}
+ay -= BOARD_HEIGHT;
+}
+}
+}
+fill(60,60,60);
+rect(BOARD_WIDTH*TILE_SIZE,0,UI_SIZE,BOARD_HEIGHT*TILE_SIZE);
+fill(255,255,255);
+String s = "";
+if(startMillis >= 0 && endMillis >= 0){
+fill(0,255,0);
+s = timeToString(endMillis-startMillis);
+}else if(startMillis >= 0 && correctTiles < BOARD_WIDTH*BOARD_HEIGHT){
+s = timeToString(millis()-startMillis);
+}else if(isScrambled){
+s = "Scrambled!";
+}
+
+setFont(1);
+text(s,width-10,150);
+textFont(font,28);
+if(startMillis >= 0){
+String details = "";
+float mps = 0;
+if(moveCount >= 2){
+if(endMillis >= 0){
+mps = ((float)1000.0)*(moveCount-1)/(endMillis-startMillis);
+}else{
+mps = ((float)1000.0)*(moveCount-1)/(millis()-startMillis);
+}
+}
+details = moveCount+" mov, "+nf(mps,0,2)+" mps";
+text(details,width-10,208);
+text("1st move not counted\nin mps calculation",width-10,240);
+}
+setFont(1);
+for(int i = 0; i < SOLVES_IN_AVERAGE; i++){
+String str = "-";
+if(times[i] >= 0){
+str = timeToString(times[i]);
+}
+fill(255,255,255);
+if(i == minIndex || i == maxIndex){
+str = "("+str+")";
+fill(160);
+}
+text(str,width-10,height-450-i*50);
+}
+fill(255,255,255);
+s = "-";
+if(average >= 0){
+s = timeToString(average);
+}
+text("= "+s,width-10,height-350);
