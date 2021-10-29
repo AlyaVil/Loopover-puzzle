@@ -238,3 +238,68 @@ if(average >= 0){
 s = timeToString(average);
 }
 text("= "+s,width-10,height-350);
+textFont(font,36);
+  String[] names = {"Controls","Reset with\nbigger board","Reset with\nsmaller board"};
+  for(int i = 0; i < 3; i++){
+    fill(100);
+    rect(1020,height-330+110*i,260,90);
+    fill(255);
+    textAlign(CENTER);
+    text(names[i],1150,height-295+110*i);
+  }
+  if(abs(mouseX-1150) <= 150 && abs(mouseY-(height-285)) <= 45){
+    textFont(font,28);
+    fill(100);
+    rect(1020,height-740,260,720);
+    fill(255);
+    textAlign(CENTER);
+    text("CONTROLS\n(not all necessary)\n\nMouse/touch screen:\ndrag tiles\n\nIJKL / arrow keys:\nmove cursor\n\nHold space:\ncling cursor to grid\n\nWASD:\ncling & move cursor\n\nShift + letter:\nTeleport to that tile\n\nEnter:\ninsta-click\nupper-right button",1150,height-705);
+  }
+  textFont(font,40);
+  fill(100);
+  rect(1020,10,260,80);
+  fill(255);
+  String ss = "[SCRAMBLE]";
+  if(startMillis >= 0 && endMillis >= 0){
+    ss = "[UNLOCK]";
+  }else if(startMillis >= 0 && correctTiles < BOARD_WIDTH*BOARD_HEIGHT){
+    ss = "[RESET]";
+  }else if(isScrambled){
+    ss = "[RESET]";
+  }
+  text(ss,1150,62);
+  textAlign(RIGHT);
+  
+  resizeDelay = max(0,resizeDelay-1);
+}
+boolean hasDiff(int newn, int old, boolean isLower){
+  int diff = (newn+BOARD_WIDTH-old)%BOARD_WIDTH;
+  if(isLower){
+    return (diff >= 1 && diff <= BOARD_WIDTH/2);
+  }else{
+    return (diff >= (BOARD_WIDTH+1)/2 && diff <= BOARD_WIDTH-1);
+  }
+}
+String toChar(int i){
+  if(i < 10){
+    return i+"";
+  }else{
+    return letters[i-10];
+  }
+}
+boolean isMoveableTile(boolean isHorizontal){
+  return (GAME_MODE != 1 || 
+  ((highlightX == centerTileX && !isHorizontal) || 
+  (highlightY == centerTileY && isHorizontal)));
+}
+String timeToString(int mil){
+  int sec = mil%60000;
+  int min = floor(mil/60000);
+  if(min == 0){
+    return nf((float)(sec)/1000,0,3);
+  }else if(sec < 10000){
+    return min+":0"+nf((float)(sec)/1000,0,3);
+  }else{
+    return min+":"+nf((float)(sec)/1000,0,3);
+  }
+}
