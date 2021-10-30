@@ -303,3 +303,55 @@ String timeToString(int mil){
     return min+":"+nf((float)(sec)/1000,0,3);
   }
 }
+void setFont(int n){
+  if(n == 0){
+    if(BOARD_WIDTH*BOARD_HEIGHT >= 26){
+      textFont(font,TILE_SIZE*0.53);
+    }else{
+      textFont(font,TILE_SIZE*0.9);
+    }
+    textAlign(CENTER);
+  }else if(n == 1){
+    textAlign(RIGHT);
+    textFont(font,50);
+  }
+}
+void mousePressed(){
+  if(mouseX >= 1000){
+    for(int i = 0; i < 2; i++){
+      float xDiff = abs(mouseX-1150);
+      float yDiff = abs(mouseY-(height-185+110*i));
+      if(xDiff <= 150 && yDiff <= 45){
+        if(resizeDelay <= 0){
+          resetBoard(min(max(BOARD_WIDTH+(1-2*i),2),20));
+          resizeDelay = 10;
+        }
+      }
+    }
+    if(mouseX >= 1020 && mouseY < 100){
+      if(resizeDelay <= 0){
+        dealWithEnter();
+        resizeDelay = 10;
+      }
+    }
+  }else{
+    isMouseDown = true;
+    highlightX = floor(mouseX/TILE_SIZE%BOARD_WIDTH)%BOARD_WIDTH;
+    highlightY = floor(mouseY/TILE_SIZE%BOARD_HEIGHT)%BOARD_HEIGHT;
+  }
+}
+void mouseReleased(){
+  isMouseDown = false;
+}
+void keyPressed(){
+  if(key == '\n'){
+    dealWithEnter();
+  }else if(endMillis == -1){
+    lastMoused = false;
+  }
+  if(key == ' '){
+    isSpaceDown = true;
+  }
+  if(key == CODED && keyCode == SHIFT){
+    isShiftDown = true;
+  }
