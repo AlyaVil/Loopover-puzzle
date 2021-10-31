@@ -355,3 +355,69 @@ void keyPressed(){
   if(key == CODED && keyCode == SHIFT){
     isShiftDown = true;
   }
+ if(isShiftDown && BOARD_WIDTH*BOARD_HEIGHT <= 26){
+    int theKey = (int)(key);
+    if(theKey <= 64+26){
+      theKey -= 65;
+    }else{
+      theKey -= 97;
+    }
+    if(theKey >= 0 && theKey < 26){
+      for(int x = 0; x < BOARD_WIDTH; x++){
+        for(int y = 0; y < BOARD_HEIGHT; y++){
+          if(board[y][x] == theKey){
+            highlightX = x;
+            highlightY = y;
+          }
+        }
+      }
+    }
+  }else{
+    if(endMillis == -1){
+      if(key == 'd' || key == 'D' || key == 'a' || key == 'A' || 
+      key == 's' || key == 'S' || key == 'w' || key == 'W'){
+        timeSinceLastWASD = millis();
+      }
+      if((rightPressed() && isSpaceDown) || key == 'd' || key == 'D'){
+        move(0,highlightX,highlightY, false);
+      }else if((leftPressed() && isSpaceDown) || key == 'a' || key == 'A'){
+        move(1,highlightX,highlightY, false);
+      }else if((downPressed() && isSpaceDown) || key == 's' || key == 'S'){
+        move(2,highlightX,highlightY, false);
+      }else if((upPressed() && isSpaceDown) || key == 'w' || key == 'W'){
+        move(3,highlightX,highlightY, false);
+      }
+    }
+    if(!isSpaceDown){
+      if(rightPressed()){
+        highlightX = (highlightX+1)%BOARD_WIDTH;
+      }else if(leftPressed()){
+        highlightX = (highlightX+BOARD_WIDTH-1)%BOARD_WIDTH;
+      }else if(downPressed()){
+        highlightY = (highlightY+1)%BOARD_HEIGHT;
+      }else if(upPressed()){
+        highlightY = (highlightY+BOARD_HEIGHT-1)%BOARD_HEIGHT;
+      }
+    }
+  }
+}
+boolean rightPressed(){
+  return ((key == CODED && keyCode == RIGHT) || key == 'l' || key == 'L');
+}
+boolean leftPressed(){
+  return ((key == CODED && keyCode == LEFT) || key == 'j' || key == 'J');
+}
+boolean downPressed(){
+  return ((key == CODED && keyCode == DOWN)|| key == 'k' || key == 'K');
+}
+boolean upPressed(){
+  return ((key == CODED && keyCode == UP) || key == 'i' || key == 'I');
+}
+void keyReleased(){
+  if(key == ' '){
+    isSpaceDown = false;
+  }
+  if(key == CODED && keyCode == SHIFT){
+    isShiftDown = false;
+  }
+}
