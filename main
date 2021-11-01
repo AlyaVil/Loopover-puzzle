@@ -421,3 +421,74 @@ void keyReleased(){
     isShiftDown = false;
   }
 }
+void dealWithEnter(){
+  if(endMillis >= 0){
+    endMillis = -1;
+    startMillis = -1;
+  }else if(!isScrambled && startMillis == -1){
+    float low = pow(max(BOARD_WIDTH,BOARD_HEIGHT),1.4)*60;
+    float high = pow(max(BOARD_WIDTH,BOARD_HEIGHT),1.5)*60+30;
+    scramble((int)(random(low, high)));
+  }else{
+    resetBoard(BOARD_WIDTH);
+  }
+}
+void move(int moveDirection, int hx, int hy, boolean scrambleMove){
+  if(moveDirection == 0){
+    int ph = board[hy][BOARD_WIDTH-1];
+    for(int x = BOARD_WIDTH-1; x >= 1; x--){
+      setBoardTile(x,hy,board[hy][x-1]);
+    }
+    setBoardTile(0,hy,ph);
+    if(highlightY == hy) highlightX++;
+    transitions[0][hy]--;
+    horizontalLast = true;
+  }else if(moveDirection == 1){
+    int ph = board[hy][0];
+    for(int x = 0; x < BOARD_WIDTH-1; x++){
+      setBoardTile(x,hy,board[hy][x+1]);
+    }
+    setBoardTile(BOARD_WIDTH-1,hy,ph);
+    if(highlightY == hy) highlightX--;
+    transitions[0][hy]++;
+    horizontalLast = true;
+  }else if(moveDirection == 2){
+    int ph = board[BOARD_HEIGHT-1][hx];
+    for(int y = BOARD_HEIGHT-1; y >= 1; y--){
+      setBoardTile(hx,y,board[y-1][hx]);
+    }
+    setBoardTile(hx,0,ph);
+    if(highlightX == hx) highlightY++;
+    transitions[1][hx]--;
+    horizontalLast = false;
+  }else{
+    int ph = board[0][hx];
+    for(int y = 0; y < BOARD_HEIGHT-1; y++){
+      setBoardTile(hx,y,board[y+1][hx]);
+    }
+    setBoardTile(hx,BOARD_HEIGHT-1,ph);
+    if(highlightX == hx) highlightY--;
+    transitions[1][hx]++;
+    horizontalLast = false;
+  }
+  highlightX = (highlightX+BOARD_WIDTH)%BOARD_WIDTH;
+  highlightY = (highlightY+BOARD_HEIGHT)%BOARD_HEIGHT;
+  if(scrambleMove){
+    startMillis = -1;
+    isScrambled = true;
+  }else{
+    if(startMillis == -1 && isScrambled){
+      startMillis = millis();
+    }
+    isScrambled = false;
+    moveCount++;
+  }
+  if(correctTiles == BOARD_WIDTH*BOARD_HEIGHT){
+    if(startMillis >= 0){
+      solvedStuff();
+    }
+  }else if(endMillis >= 0){
+    startMillis = -1;
+    endMillis = -1;
+  }
+}
