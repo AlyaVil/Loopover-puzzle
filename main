@@ -492,3 +492,65 @@ void move(int moveDirection, int hx, int hy, boolean scrambleMove){
     endMillis = -1;
   }
 }
+void solvedStuff(){
+  endMillis = millis();
+  lastMoused = true;
+  for(int i = SOLVES_IN_AVERAGE-1; i >= 1; i--){
+    times[i] = times[i-1];
+  }
+  times[0] = endMillis-startMillis;
+  average = -1;
+  if(times[SOLVES_IN_AVERAGE-1] >= 0){
+    int sum = 0;
+    int min = 2000000000;
+    int max = -1;
+    for(int i = 0; i < SOLVES_IN_AVERAGE; i++){
+      sum += times[i];
+      if(times[i] > max){
+        max = times[i];
+        maxIndex = i;
+      }
+      if(times[i] < min){
+        min = times[i];
+        minIndex = i;
+      }
+    }
+    sum -= max+min;
+    average = sum/3;
+  }
+}
+void setBoardTile(int x, int y, int value){
+  if(isCorrect(x,y)) correctTiles--;
+  board[y][x] = value;
+  if(isCorrect(x,y)) correctTiles++;
+  if(value == BOARD_WIDTH*(BOARD_HEIGHT/2)+BOARD_WIDTH/2){
+    centerTileX = x;
+    centerTileY = y;
+  }
+}
+boolean isCorrect(int x, int y){
+  return (board[y][x] == y*BOARD_WIDTH+x);
+}
+void scramble(int scrambleMoveCount){
+  int currentMove = -1;
+  int i = 0;
+  while(i < scrambleMoveCount || correctTiles == BOARD_WIDTH*BOARD_HEIGHT){
+    currentMove = getNextRandomMove(currentMove);
+    if(GAME_MODE == 1){
+      move(currentMove,centerTileX,centerTileY,true);
+    }else{
+      move(currentMove,floor(random(0,BOARD_WIDTH)),floor(random(0,BOARD_HEIGHT)),true);
+    }
+    i++;
+  }
+  moveCount = 0;
+}
+int getNextRandomMove(int prev){
+  if(prev == -1){
+    return floor(random(0,4));
+  }else if(prev <= 1){
+    return floor(random(2,4));
+  }else{
+    return floor(random(0,2));
+  }
+}
