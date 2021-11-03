@@ -127,7 +127,7 @@ for(int i = 0; i < 2; i++){
   setFont(0);
   for(int y = 0; y < BOARD_HEIGHT; y++){
     for(int x = 0; x < BOARD_WIDTH; x++){
-      float ax = x;
+      float ax =0 ;
       if(horizontalLast){
         ax += transitions[0][y];
       }
@@ -554,3 +554,4 @@ int getNextRandomMove(int prev){
     return floor(random(0,2));
   }
 }
+
